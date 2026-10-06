@@ -1,0 +1,64 @@
+name: Publish catalog
+on:
+  push:
+    tags: ['*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: catalog-publication
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - name: Build validated release bundle
+        run: python -m tools.release_bundle --root . --output build/release --revision "$SOURCE_REVISION"
+        env:
+          SOURCE_REVISION: ${{ github.sha }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: catalog-release
+          path: build/release/assets/
+          if-no-files-found: error
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: catalog-release
+          path: build/release/assets/
+      - name: Publish (a main dispatch only if this is still main)
+        run: |
+          if [ "$GITHUB_REF_TYPE" = branch ]; then
+            current_revision=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)
+            if [ "$current_revision" != "$SOURCE_REVISION" ]; then
+              echo 'Skipping superseded main revision.'
+              exit 0
+            fi
+          fi
+          python -m tools.publish_catalog --assets build/release/assets --revision "$SOURCE_REVISION"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_REVISION: ${{ github.sha }}

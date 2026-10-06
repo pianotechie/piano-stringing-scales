@@ -1,0 +1,26 @@
+name: Validate scales
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements.txt
+      - run: python -m unittest discover -s tests -v
+      - run: python -m tools.validate --root .
+      - name: Build snapshot
+        run: python -m tools.build_catalog --root . --output build/snapshot --revision "$SOURCE_REVISION"
+        env:
+          SOURCE_REVISION: ${{ github.sha }}
