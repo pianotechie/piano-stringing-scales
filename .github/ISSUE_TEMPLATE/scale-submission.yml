@@ -1,0 +1,41 @@
+name: Scale submission
+description: Submit a scale exported from the app by pasting its two files.
+title: "[Scale submission] "
+labels: ["scale-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Paste the contents of the two files from the folder the app exported: `metadata.json` and `strings.csv`. See [Submitting from the app](https://github.com/pianotechie/piano-stringing-scales/blob/main/CONTRIBUTING.md#submitting-from-the-app) and the [contribution terms](https://github.com/pianotechie/piano-stringing-scales/blob/main/CONTRIBUTING.md#contribution-terms).
+
+        An automatic check will comment on this issue with the result of the format checks. A reviewer then checks permission, sources and the measurements before the scale is added.
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have permission to publish this scale under CC BY 4.0.
+          required: true
+        - label: This submission contains no private information.
+          required: true
+  - type: textarea
+    id: metadata
+    attributes:
+      label: metadata.json
+      description: The full contents of metadata.json.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: strings
+    attributes:
+      label: strings.csv
+      description: The full contents of strings.csv.
+      render: csv
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Anything a reviewer should know, such as how the piano was measured or where a published scale came from.
