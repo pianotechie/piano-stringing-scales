@@ -8,6 +8,17 @@ Create a permanent lowercase UUID directory under `scales/` containing only `met
 
 Validation rejects structural errors and reports incomplete design measurements as warnings. Passing validation does not establish licensing rights, manufacturer authenticity, or suitability for restringing. Maintainers review those separately. This repository does not currently apply automatic engineering plausibility thresholds to unusual but structurally valid dimensions.
 
+## Submitting from the app
+
+Before you submit, make sure you have permission to publish the scale under [CC BY 4.0](LICENSE-DATA) and that it contains no private information. Read the [contribution terms](#contribution-terms) below; passing the automatic checks does not establish either.
+
+The app exports a scale as a zip file. Unzip it to get one folder named with a lowercase UUID. The folder must contain only `metadata.json` and `strings.csv`; delete anything else before submitting. Then either:
+
+- **Upload the folder.** On GitHub, open the `scales/` folder, choose **Add file** → **Upload files**, drag the whole UUID folder in, and commit. GitHub opens a pull request for you, and the checks run on it automatically.
+- **Use the issue form.** [Open a Scale submission issue](https://github.com/pianotechie/piano-stringing-scales/issues/new?template=scale-submission.yml), tick the confirmations, and paste the contents of the two files. An automatic check comments on the issue with the result of the format checks, and checks again if you edit the issue. It does not add anything to the repository.
+
+Either way, a reviewer checks permission, sources and the measurements before the scale is added.
+
 ## Contribution terms
 
 By submitting a contribution for inclusion in this repository, you agree to license:

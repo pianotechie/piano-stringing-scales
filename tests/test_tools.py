@@ -146,6 +146,16 @@ class ScaleToolsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'symlink'):
             validate_repository(self.root)
 
+    def test_stray_entries_under_scales_are_rejected(self):
+        directory = self.fixture()
+        (directory / 'nested').mkdir()
+        with self.assertRaisesRegex(ValueError, 'expected only'):
+            validate_repository(self.root)
+        (directory / 'nested').rmdir()
+        (self.root / 'scales' / 'notes.txt').write_text('stray')
+        with self.assertRaisesRegex(ValueError, 'unexpected entry'):
+            validate_repository(self.root)
+
     def test_note_names_match_app_conventions(self):
         for text, expected in [('A0',21), ('C#4',61), ('Db4',61), ('B♭3',58), ('60',60)]:
             self.assertEqual(midi_note(text), expected)
