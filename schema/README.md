@@ -39,7 +39,7 @@ Catalog entries are ordered by UUID and output is deterministic for identical so
 
 ## Release publication
 
-The `Publish catalog` workflow runs when a tag is pushed and can be dispatched manually (on main or a tag) to retry; it does not run on ordinary pushes to main. The repository name is taken from `GITHUB_REPOSITORY`. Publishing from a tag releases the tagged commit. Its read-only build job runs the full test suite and builds a validated bundle; a separate job receives contents-write permission for release publication. Pull requests do not trigger publication. Workflow runs are serialized, and a dispatch on main skips a superseded main revision before publishing.
+The `Publish catalog` workflow runs on a manual dispatch from main or when a `v*` tag is pushed. A tagged commit must be on main; otherwise the publish job fails. The publish job waits for approval through the `release` environment before it publishes. The repository name is taken from `GITHUB_REPOSITORY`. Publishing from a tag releases the tagged commit. Its read-only build job runs the full test suite and builds a validated bundle; a separate job receives contents-write permission for release publication. Pull requests do not trigger publication. Workflow runs are serialized, and a dispatch on main skips a superseded main revision before publishing.
 
 Each revision gets a release tag `catalog-<full-commit-sha>` with these assets:
 
