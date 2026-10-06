@@ -70,6 +70,8 @@ class SubmissionIntakeTests(unittest.TestCase):
         self.assertTrue(self.problems(issue_body(metadata='{not json'))[0].startswith('metadata.json is not valid JSON'))
         self.assertEqual(self.problems(issue_body(metadata='[1]')), ['metadata.json must be a JSON object'])
         self.assertIn('duplicate key', self.problems(issue_body(metadata='{"id": "a", "id": "b"}'))[0])
+        self.assertEqual(self.problems(issue_body(metadata='[' * 20000 + ']' * 20000)),
+                         ['metadata.json is nested too deeply'])
         for bad in ['../../etc', 'ABCDEF01-1111-4111-8111-111111111111', '', 'x/../y', 5]:
             body = issue_body(metadata=json.dumps({'id': bad}))
             self.assertEqual(self.problems(body), ['metadata.json "id" must be a lowercase UUID'], bad)

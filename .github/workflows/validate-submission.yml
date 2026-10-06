@@ -93,7 +93,7 @@ jobs:
             const body = `${marker}\n${text}`;
             const issue_number = context.payload.issue.number;
             const comments = await github.paginate(github.rest.issues.listComments, { ...context.repo, issue_number });
-            const existing = comments.find((item) => item.user.type === 'Bot' && item.body.includes(marker));
+            const existing = comments.find((item) => item.user.login === 'github-actions[bot]' && item.body.includes(marker));
             if (existing) {
               await github.rest.issues.updateComment({ ...context.repo, comment_id: existing.id, body });
             } else {

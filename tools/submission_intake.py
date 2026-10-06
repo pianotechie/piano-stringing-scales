@@ -80,6 +80,8 @@ def parse_metadata(text):
         value = json.loads(text, object_pairs_hook=pairs)
     except json.JSONDecodeError as error:
         raise SubmissionError([f'metadata.json is not valid JSON ({error.msg}, line {error.lineno})']) from None
+    except RecursionError:
+        raise SubmissionError(['metadata.json is nested too deeply']) from None
     if not isinstance(value, dict):
         raise SubmissionError(['metadata.json must be a JSON object'])
     return value
